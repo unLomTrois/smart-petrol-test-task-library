@@ -1,5 +1,4 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative.api import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 from app.db.models import Base
 # import os
@@ -10,7 +9,7 @@ engine = create_engine(
     echo=True,
 )
 
-Base = declarative_base()
+Base.metadata.create_all(engine)
 
 # init database
 

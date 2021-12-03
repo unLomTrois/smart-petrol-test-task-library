@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Optional
 from fastapi import Query
+from app.db import Session
 
-from app.db.models import User
+from app.db.models import Role, User
 
 #APIRouter creates path operations for user module
 router = APIRouter(
@@ -13,8 +14,11 @@ router = APIRouter(
 
 @router.get("/")
 async def read_root():
-    kek = User.query.all()
-    return {"USER": kek}
+    users = Session.query(User).all() # .filter_by(name='test').first() 
+    roles = Session.query(Role).all() # .filter_by(name='test').first() 
+    # print(users[0].role)
+
+    return [users, roles]
 
 # @router.get("/{user_id}")
 # async def read_user(user_id: int):

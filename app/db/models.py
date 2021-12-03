@@ -4,14 +4,20 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import String
 
+
 Base = declarative_base()
 
-# class Role(Base):
-#     __tablename__ = "roles"
+class Role(Base):
+    __tablename__ = "roles"
 
-#     id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
-#     name = Column(String)
-    
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    name = Column(String)
+    # users = relationship("User", back_populates="roles")
+    # # users = relationship("User", backref="roles")
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class User(Base):
     __tablename__ = "users"
@@ -20,13 +26,13 @@ class User(Base):
         Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
     )
     name = Column(String)
-    # role_id = Column(Integer, ForeignKey('role.id'))
-    # role = relationship("Role", backref="users")
+    role_id = Column(Integer, ForeignKey('roles.id'))
+    role = relationship("Role", backref="users")
 
     # def __repr__(self):
     #     return "<Note(title='{}', description='{}')>".format(
     #         self.title, self.description
     #     )
 
-    # def as_dict(self):
-    #    return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
