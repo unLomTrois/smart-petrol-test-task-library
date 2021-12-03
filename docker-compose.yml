@@ -1,0 +1,20 @@
+version: "3"
+services:
+  database:
+    image: "postgres"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=testdb
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testpass
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    networks:
+      - apbp-network
+
+volumes:
+  database-data:
+
+networks:
+  apbp-network:
