@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from app.db.models import Base
-# import os
+
 
 # init engine for connection
 engine = create_engine(
@@ -9,9 +9,9 @@ engine = create_engine(
     echo=True,
 )
 
+# init database
 Base.metadata.create_all(engine)
 
-# init database
 
 # init session
 Session = scoped_session(sessionmaker(bind=engine))

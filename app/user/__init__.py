@@ -5,20 +5,20 @@ from app.db import Session
 
 from app.db.models import Role, User
 
-#APIRouter creates path operations for user module
+# APIRouter creates path operations for user module
 router = APIRouter(
     prefix="/users",
     tags=["users"],
     responses={404: {"description": "Not found"}},
 )
 
+
 @router.get("/")
 async def read_root():
-    users = Session.query(User).all() # .filter_by(name='test').first() 
-    roles = Session.query(Role).all() # .filter_by(name='test').first() 
-    # print(users[0].role)
+    users = Session.query(User).all()  # .filter_by(name='test').first()
 
-    return [users, roles]
+    return [{"name": user.name, "role": user.role} for user in users]
+
 
 # @router.get("/{user_id}")
 # async def read_user(user_id: int):
