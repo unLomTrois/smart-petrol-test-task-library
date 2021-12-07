@@ -1,13 +1,17 @@
-from os import name
 from sqlalchemy.orm import Session
 
 from app.core.hash import get_password_hash
 
-from .. import models, schemas
+from app.db import models
+from app.schemas import users as user_schemas
 
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
+
+
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.name == username).first()
 
 
 def get_user_by_email(db: Session, email: str):
@@ -18,7 +22,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate) -> models.User:
+def create_user(db: Session, user: user_schemas.UserCreate) -> models.User:
     hashed_password = get_password_hash(user.password)
     new_user = models.User(email=user.email,
                            hashed_password=hashed_password,
@@ -30,7 +34,8 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     return new_user
 
 
-def update_user(db: Session, user: schemas.UserUpdate):
+# add password hashing
+def update_user(db: Session, user: user_schemas.UserUpdate):
     db_user = db.query(
         models.User).filter(models.User.id == user.id).one_or_none()
     if db_user is None:

@@ -1,12 +1,9 @@
 from fastapi import FastAPI
 from app.db import Base, engine
-from app.user import router as user_router
-from app.role import router as role_router
-
+from app.api import api_router
 
 def include_router(app: FastAPI):
-    app.include_router(user_router)
-    app.include_router(role_router)
+    app.include_router(api_router)
 
 
 # def configure_static(app):

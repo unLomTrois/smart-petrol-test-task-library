@@ -1,17 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from app.db import Session, crud, get_db
 
-from app.db import models, schemas
 from app.db import crud
+from app import schemas
+
 
 # APIRouter creates path operations for user module
-router = APIRouter(
-    prefix="/users",
-    tags=["users"],
-    responses={404: {
-        "description": "Not found"
-    }},
-)
+router = APIRouter(responses={404: {"description": "Not found"}}, )
 
 
 @router.get("/")
@@ -26,16 +21,15 @@ async def read_root(db: Session = Depends(get_db)):
     } for user in users]
 
 
+
+# @router.get("/users/me/", response_model=schemas.User)
+# async def read_users_me(current_user: schemas.User = Depends(get_current_active_user)):
+#     return current_user
+
+
 # @router.get("/{user_id}")
 # async def read_user(user_id: int):
 #     return {"user_id": user_id, "full_name": "Danny Manny", "email": "danny.manny@gmail.com"}
-
-# @router.get("/detail")
-# async def read_users(q: Optional[str] = Query(None, max_length=50)):
-#     results = {"users": [{"user_id": 1}, {"user_id": 2}]}
-#     if q:
-#         results.update({"q": q})
-#     return results
 
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)

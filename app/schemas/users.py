@@ -1,19 +1,6 @@
-from typing import Optional
+
 from pydantic import BaseModel
-
-
-class Role(BaseModel):
-    id: int
-    code: str
-    name: str
-
-    class Config:
-        orm_mode = True
-
-
-class RoleCreate(BaseModel):
-    code: str
-    name: str
+from typing import Optional
 
 
 class UserBase(BaseModel):
