@@ -1,17 +1,20 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-from app.db.models import Base
-
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
 
 # init engine for connection
-engine = create_engine(
-    "postgresql://testuser:testpass@localhost:5432/testdb",
-    echo=True,
-)
+SQLALCHEMY_DATABASE_URL = "postgresql://testuser:testpass@localhost:5432/testdb"
 
-# init database
-Base.metadata.create_all(engine)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+Base = declarative_base()
 
 
-# init session
-Session = scoped_session(sessionmaker(bind=engine))
+def get_db():  # new
+    try:
+        db = SessionLocal()
+        yield db
+    finally:
+        db.close()

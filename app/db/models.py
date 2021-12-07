@@ -4,16 +4,18 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import String
 
-
-Base = declarative_base()
+from app.db import Base
 
 
 class Role(Base):
     __tablename__ = "roles"
 
-    id = Column(
-        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
-    )
+    id = Column(Integer,
+                primary_key=True,
+                nullable=False,
+                unique=True,
+                autoincrement=True)
+    code = Column(String)
     name = Column(String)
 
     def as_dict(self):
@@ -23,10 +25,15 @@ class Role(Base):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(
-        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
-    )
+    id = Column(Integer,
+                primary_key=True,
+                nullable=False,
+                unique=True,
+                autoincrement=True)
     name = Column(String)
+    email = Column(String, unique=True)
+    hashed_password = Column(String)
+
     role_id = Column(Integer, ForeignKey("roles.id"))
     role = relationship("Role", backref="users")
 

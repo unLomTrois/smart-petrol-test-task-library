@@ -1,23 +1,29 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import Optional
-from fastapi import Query
-from app.db import Session
+from fastapi import APIRouter, Depends, status
+from app.db import Session, crud, get_db
 
-from app.db.models import Role, User
+from app.db import models, schemas
+from app.db import crud
 
 # APIRouter creates path operations for user module
 router = APIRouter(
     prefix="/users",
     tags=["users"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {
+        "description": "Not found"
+    }},
 )
 
 
 @router.get("/")
-async def read_root():
-    users = Session.query(User).all()  # .filter_by(name='test').first()
+async def read_root(db: Session = Depends(get_db)):
+    users = crud.get_users(db)
 
-    return [{"name": user.name, "role": user.role} for user in users]
+    return [{
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role
+    } for user in users]
 
 
 # @router.get("/{user_id}")
@@ -31,14 +37,32 @@ async def read_root():
 #         results.update({"q": q})
 #     return results
 
-# @router.post("/add")
-# async def add_user(user: User):
-#     return {"full_name": user.first_name+" "+user.last_name}
 
-# @router.put("/update")
-# async def read_user(user: User):
-#     return {"user_id": user.user_id, "full_name": user.first_name+" "+user.last_name, "email": user.email}
+@router.post("/add", status_code=status.HTTP_201_CREATED)
+async def add_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    new_user = crud.create_user(db, user)
 
-# @router.delete("/{user_id}/delete")
-# async def read_user(user_id: int):
-#     return {"user_id": user_id, "is_deleted": True}
+    return {
+        "id": new_user.id,
+        "name": new_user.name,
+        "email": new_user.email,
+        "role_id": new_user.role_id
+    }
+
+
+@router.put("/update", status_code=status.HTTP_200_OK)
+async def update_user(user: schemas.UserUpdate, db: Session = Depends(get_db)):
+    updated_user = crud.update_user(db, user)
+
+    return {
+        "id": updated_user.id,
+        "name": updated_user.name,
+        "email": updated_user.email,
+        "role_id": updated_user.role_id
+    }
+
+
+@router.delete("/{user_id}/delete", status_code=status.HTTP_200_OK)
+async def read_user(user_id: int, db: Session = Depends(get_db)):
+    crud.delete_user(db, user_id)
+    return {"message": "deleted successfully"}
