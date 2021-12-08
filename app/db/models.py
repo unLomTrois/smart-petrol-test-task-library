@@ -35,7 +35,7 @@ class User(Base):
     hashed_password = Column(String)
 
     role_id = Column(Integer, ForeignKey("roles.id"))
-    role = relationship("Role", backref="users")
+    role: Role = relationship("Role", backref="users")
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
