@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import String
+from sqlalchemy.sql.sqltypes import Date, String
 
 from app.db import Base
 
@@ -36,6 +36,25 @@ class User(Base):
 
     role_id = Column(Integer, ForeignKey("roles.id"))
     role = relationship("Role", backref="users")
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class Book(Base):
+    __tablename__ = "books"
+
+    id = Column(Integer,
+                primary_key=True,
+                nullable=False,
+                unique=True,
+                autoincrement=True)
+    title = Column(String)
+    author = Column(String)
+    language = Column(String)
+    pages = Column(Integer)
+    publication_date = Column(Date)
+
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
