@@ -90,13 +90,11 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
         return param
 
 
-class RoleChecker:
-    def __init__(self, allowed_roles: list[str]):
-        self.allowed_roles = allowed_roles
-
-    def __call__(self,
-                 user: models.User = Depends(get_current_user_from_token)):
-        print("userrole:", user.role.name, user.role.code)
-        if user.role.code not in self.allowed_roles:
+def check_role(allowed_roles: list[str]):    
+    def _check_role(user: models.User = Depends(get_current_user_from_token)):
+        if user.role.code not in allowed_roles:
             # logger.debug(f"User with role {user.role} not in {self.allowed_roles}")
-            raise HTTPException(status_code=403, detail="Operation not permitted")
+            raise HTTPException(status_code=403,
+                                detail="Operation not permitted")
+
+    return _check_role
