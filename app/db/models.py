@@ -41,7 +41,27 @@ class User(Base):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
+class BookItem(Base):
+    """Конкретный экземпляр книги, которую можно выдавать клиенту"""
+
+    __tablename__ = "book_items"
+
+    id = Column(Integer,
+                primary_key=True,
+                nullable=False,
+                unique=True,
+                autoincrement=True)
+
+    # ссылка на абстрактуню книгу, к которой принадлежит данная конкретная
+    parent_book_id = Column(Integer, ForeignKey('books.id'))
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
 class Book(Base):
+    """Абстрактная книга"""
+
     __tablename__ = "books"
 
     id = Column(Integer,
@@ -55,6 +75,7 @@ class Book(Base):
     pages = Column(Integer)
     publication_date = Column(Date)
 
+    items: list[BookItem] = relationship("BookItem")
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

@@ -57,6 +57,6 @@ async def update_user(user: schemas.UserUpdate, db: Session = Depends(get_db)):
 
 
 @router.delete("/{user_id}/delete", status_code=status.HTTP_200_OK)
-async def read_user(user_id: int, db: Session = Depends(get_db)):
+async def delete_user(user_id: int, db: Session = Depends(get_db)):
     crud.delete_user(db, user_id)
     return {"message": "deleted successfully"}
