@@ -20,7 +20,7 @@ async def book_a_book(booking: booking_schemas.BookingCreate,
     return crud.book_a_book(db=db, booking=booking)
 
 
-@router.post("/unbook", dependencies=[Depends(check_role(["librarian"]))])
+@router.delete("/unbook", dependencies=[Depends(check_role(["librarian"]))])
 async def unbook(book_item_id: int, db: Session = Depends(get_db)):
     return crud.unbook_a_book(db=db, book_item_id=book_item_id)
 

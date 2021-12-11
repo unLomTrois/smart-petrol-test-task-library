@@ -7,12 +7,14 @@ from app.schemas import books as book_schamas
 
 from .book_items import router as route_book_items
 from .booking import router as route_booking
+from .issues import router as route_issues
 
 # APIRouter creates path operations for user module
 router = APIRouter(responses={404: {"description": "Not found"}}, )
 
 router.include_router(route_book_items, prefix="/items", tags=["book_items"])
 router.include_router(route_booking, prefix="/booking", tags=["booking"])
+router.include_router(route_issues, prefix="/issues", tags=["issues"])
 
 
 @router.get("/")

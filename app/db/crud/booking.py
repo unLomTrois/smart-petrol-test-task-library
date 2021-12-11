@@ -7,33 +7,17 @@ from app.core.hash import get_password_hash
 from app.db import models
 from app.db.crud.books import get_book_item
 from app.db.crud.users import get_user
+from app.db.utils import is_booked, is_issued
 from app.schemas import booking as schemas_booking
 
-def get_booking_by_booked_item(db: Session, book_item_id: int):
-    return db.query(
-        models.Booking).filter(models.Booking.book_item_id == book_item_id).first()
 
+def get_booking_by_booked_item(db: Session, book_item_id: int):
+    return db.query(models.Booking).filter(
+        models.Booking.book_item_id == book_item_id).first()
 
 
 def get_all_bookings(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Booking).offset(skip).limit(limit).all()
-
-
-
-def is_booked(db: Session, book_item_id: int) -> bool:
-    """Проверяет, что итем уже забронирован"""
-
-    return db.query(models.Booking).filter(
-        models.Booking.book_item_id == book_item_id).scalar()
-
-
-# перенести в круд бук итема
-def is_given(db: Session, book_item_id: int) -> bool:
-    """Проверяет, что итем выдан"""
-
-    return db.query(
-        models.BookItem).filter(models.BookItem.id == book_item_id,
-                                models.BookItem.is_given == True).scalar()
 
 
 def book_a_book(db: Session, booking: schemas_booking.BookingCreate):
@@ -48,7 +32,7 @@ def book_a_book(db: Session, booking: schemas_booking.BookingCreate):
             detail="Вы не можете забронировать уже забронированную книгу",
         )
 
-    if is_given(db=db, book_item_id=booking.book_item_id):
+    if is_issued(db=db, book_item_id=booking.book_item_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Вы не можете забронировать уже выданную книгу",
@@ -61,7 +45,7 @@ def book_a_book(db: Session, booking: schemas_booking.BookingCreate):
     book_item.is_booked = True
     db.add(new_booking)
     db.add(book_item)
-    
+
     db.commit()
     db.refresh(new_booking)
     return new_booking
@@ -71,7 +55,7 @@ def book_a_book(db: Session, booking: schemas_booking.BookingCreate):
 def unbook_a_book(db: Session, book_item_id: int):
     book_item = get_book_item(db, book_item_id=book_item_id)
     book_item.is_booked = False
-    
+
     booking = get_booking_by_booked_item(db=db, book_item_id=book_item_id)
     db.delete(booking)
     db.add(book_item)

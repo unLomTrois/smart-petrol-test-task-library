@@ -105,3 +105,23 @@ class Booking(Base):
     user: User = relationship("User")
 
     end_of_booking: datetime = Column(DateTime, default=get_booking_end_time)
+
+
+class BookIssue(Base):
+    """Выдача книг"""
+
+    __tablename__ = "book_issue"
+
+    id = Column(Integer,
+                primary_key=True,
+                nullable=False,
+                unique=True,
+                autoincrement=True)
+
+    book_item_id: int = Column(Integer, ForeignKey('book_items.id'))
+    book_item: BookItem = relationship("BookItem")
+
+    user_id: int = Column(Integer, ForeignKey('users.id'))
+    user: User = relationship("User")
+
+    end_of_issue: datetime = Column(DateTime, default=get_booking_end_time)
