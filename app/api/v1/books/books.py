@@ -5,14 +5,14 @@ from app.db import Session, get_db
 from app.db import crud
 from app.schemas import books as book_schamas
 
-from .route_book_items import router as route_book_items
-from .route_booking import router as route_booking
+import book_items
+import booking
 
 # APIRouter creates path operations for user module
 router = APIRouter(responses={404: {"description": "Not found"}}, )
 
-router.include_router(route_book_items, prefix="/items", tags=["book_items"])
-router.include_router(route_booking, prefix="/booking", tags=["booking"])
+router.include_router(book_items.router, prefix="/items", tags=["book_items"])
+router.include_router(booking.router, prefix="/booking", tags=["booking"])
 
 
 @router.get("/")
