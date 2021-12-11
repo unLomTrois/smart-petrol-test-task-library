@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.hash import get_password_hash
@@ -7,15 +8,39 @@ from app.schemas import users as user_schemas
 
 
 def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+    user = db.query(models.User).get(user_id)
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь не найден",
+        )
+
+    return user
 
 
 def get_user_by_username(db: Session, username: str):
-    return db.query(models.User).filter(models.User.name == username).first()
+    user = db.query(models.User).filter(models.User.name == username).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь не найден",
+        )
+
+    return user
 
 
 def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+    user = db.query(models.User).filter(models.User.email == email).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пользователь не найден",
+        )
+
+    return user
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
@@ -55,3 +80,4 @@ def delete_user(db: Session, user_id: int):
     user = get_user(db, user_id)
     db.delete(user)
     db.commit()
+    return {"message": "deleted successfully"}

@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Depends
-from starlette import status
+from fastapi import APIRouter, Depends, status
 from app.api.utils import check_role
 from app.db import Session, get_db
 
 from app.db import crud
 from app.schemas import books as book_schamas
 
+from .route_book_items import router as route_book_items
+
 # APIRouter creates path operations for user module
 router = APIRouter(responses={404: {"description": "Not found"}}, )
+
+router.include_router(route_book_items, prefix="/items", tags=["book_items"])
 
 
 @router.get("/")

@@ -1,10 +1,12 @@
+from datetime import date, datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Date, String
+from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, String
 
 from app.db import Base
+from app.db.utils import get_booking_end_time
 
 
 class Role(Base):
@@ -54,6 +56,10 @@ class BookItem(Base):
 
     # ссылка на абстрактуню книгу, к которой принадлежит данная конкретная
     parent_book_id = Column(Integer, ForeignKey('books.id'))
+    parent_book = relationship("Book")
+
+    is_booked: bool = Column(Boolean, default=False)
+    is_given: bool = Column(Boolean, default=False)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -79,3 +85,23 @@ class Book(Base):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class Booking(Base):
+    """Бронирование книг"""
+
+    __tablename__ = "booking"
+
+    id = Column(Integer,
+                primary_key=True,
+                nullable=False,
+                unique=True,
+                autoincrement=True)
+
+    book_item_id: int = Column(Integer, ForeignKey('book_items.id'))
+    book_item: BookItem = relationship("BookItem")
+
+    user_id: int = Column(Integer, ForeignKey('users.id'))
+    user: User = relationship("User")
+
+    end_of_booking: datetime = Column(DateTime, default=get_booking_end_time)
