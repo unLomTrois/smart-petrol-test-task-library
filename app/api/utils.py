@@ -15,15 +15,15 @@ from jose import JWTError, jwt
 from app.core.hash import verify_password
 from app.core.config import settings
 from app.db import get_db, models
-from app.db.crud.users import get_user_by_username
+from app.db.crud.users import get_user_by_email
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login/token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login/auth")
 
 
 def authenticate_user(username: str,
                       password: str,
                       db: Session = Depends(get_db)):
-    user = get_user_by_username(username=username, db=db)
+    user = get_user_by_email(db=db, email=username)
     print(user)
     if not user:
         return False
@@ -42,13 +42,13 @@ def get_current_user_from_token(token: str = Depends(oauth2_scheme),
         payload = jwt.decode(token,
                              settings.SECRET_KEY,
                              algorithms=[settings.ALGORITHM])
-        username: str = payload.get("sub")
-        print("username/email extracted is ", username)
-        if username is None:
+        email: str = payload.get("sub")
+        print("username/email extracted is ", email)
+        if email is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = get_user_by_username(username=username, db=db)
+    user = get_user_by_email(db=db, email=email)
     if user is None:
         raise credentials_exception
     return user

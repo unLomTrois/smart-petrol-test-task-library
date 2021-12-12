@@ -2,26 +2,21 @@ from datetime import timedelta
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import HTTPException
-from fastapi import Response
 from fastapi import status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 
-from ..utils import OAuth2PasswordBearerWithCookie, authenticate_user, get_current_user_from_token
-from app.core.hash import verify_password
+from ..utils import authenticate_user, get_current_user_from_token
 from app.core.security import create_access_token
 from app.schemas.tokens import Token
-from app.db.crud.users import get_user_by_username
 from app.db import get_db
-
-from fastapi.security import OAuth2PasswordBearer
 
 router = APIRouter()
 
 
-@router.post("/token", response_model=Token)
+@router.post("/login", response_model=Token)
 def login_for_access_token(
         form_data: OAuth2PasswordRequestForm = Depends(),
         db: Session = Depends(get_db),
@@ -36,7 +31,7 @@ def login_for_access_token(
     access_token_expires = timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
-    access_token = create_access_token(data={"sub": user.name},
+    access_token = create_access_token(data={"sub": user.email},
                                        expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}
