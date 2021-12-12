@@ -17,7 +17,7 @@ from app.core.config import settings
 from app.db import get_db, models
 from app.db.crud.users import get_user_by_email
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/login/auth")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def authenticate_user(username: str,
@@ -34,6 +34,7 @@ def authenticate_user(username: str,
 
 def get_current_user_from_token(token: str = Depends(oauth2_scheme),
                                 db: Session = Depends(get_db)):
+   
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
