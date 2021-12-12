@@ -9,6 +9,7 @@ from fastapi.params import Depends
 from fastapi.security import OAuth2
 from fastapi.security.oauth2 import OAuth2PasswordBearer
 from fastapi.security.utils import get_authorization_scheme_param
+from jose.exceptions import ExpiredSignatureError
 from sqlalchemy.orm.session import Session
 from jose import JWTError, jwt
 
@@ -34,7 +35,7 @@ def authenticate_user(username: str,
 
 def get_current_user_from_token(token: str = Depends(oauth2_scheme),
                                 db: Session = Depends(get_db)):
-   
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -47,6 +48,11 @@ def get_current_user_from_token(token: str = Depends(oauth2_scheme),
         print("username/email extracted is ", email)
         if email is None:
             raise credentials_exception
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Expired token",
+        )
     except JWTError:
         raise credentials_exception
     user = get_user_by_email(db=db, email=email)
@@ -91,7 +97,7 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
         return param
 
 
-def check_role(allowed_roles: list[str]):    
+def check_role(allowed_roles: list[str]):
     def _check_role(user: models.User = Depends(get_current_user_from_token)):
         if user.role.code not in allowed_roles:
             # logger.debug(f"User with role {user.role} not in {self.allowed_roles}")
