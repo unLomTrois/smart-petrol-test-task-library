@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, String
+from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, String, Text
 
 from app.db import Base
 from app.db.utils import get_booking_end_time
@@ -70,17 +70,18 @@ class Book(Base):
 
     __tablename__ = "books"
 
-    id = Column(Integer,
+    id: int = Column(Integer,
                 primary_key=True,
                 nullable=False,
                 unique=True,
                 autoincrement=True)
-    title = Column(String)
-    author = Column(String)
-    language = Column(String)
-    pages = Column(Integer)
-    publication_date = Column(Date)
-
+    title: str = Column(String)
+    # было бы неплохо сделать автора отдельной табличкой
+    author: str = Column(String)
+    description: str = Column(Text)
+    language: str = Column(String)
+    pages: int = Column(Integer)
+    publication_date: date = Column(Date)
     items: list[BookItem] = relationship("BookItem")
 
     def as_dict(self):

@@ -19,6 +19,7 @@ class Book(BaseModel):
 class BookCreate(BaseModel):
     title: str
     author: str
+    description: str
     language: str
     pages: int
     publication_date: date

@@ -18,11 +18,9 @@ router.include_router(route_issues, prefix="/issues", tags=["issues"])
 
 
 @router.get("/")
-async def read_root(db: Session = Depends(get_db)):
+async def get_books(db: Session = Depends(get_db)):
 
     books = crud.get_books(db)
-
-    # print("\n~~~~~~~~~~~~~~:\n", crud.count_book_items(db=db, book_id=1))
 
     return [
         book.as_dict() | {
@@ -32,7 +30,7 @@ async def read_root(db: Session = Depends(get_db)):
 
 
 @router.post("/add", dependencies=[Depends(check_role(["librarian"]))])
-async def add_book(book: book_schamas.BookCreate,
+async def add_a_book(book: book_schamas.BookCreate,
                    db: Session = Depends(get_db)):
     return crud.create_book(db, book)
 
