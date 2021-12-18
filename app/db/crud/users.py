@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.core.hash import get_password_hash
 
-from app.db import models
+from app.db import models, crud
 from app.schemas import users as user_schemas
 
 
@@ -78,6 +78,8 @@ def update_user(db: Session, user: user_schemas.UserUpdate):
 
 def delete_user(db: Session, user_id: int):
     user = get_user(db, user_id)
+    crud.unbook_a_book_by_user(db, user_id)
+
     db.delete(user)
     db.commit()
     return {"message": "deleted successfully"}

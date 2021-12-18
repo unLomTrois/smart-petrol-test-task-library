@@ -20,6 +20,10 @@ def get_all_bookings(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Booking).offset(skip).limit(limit).all()
 
 
+def get_all_bookings_of_user(db: Session, user_id: int):
+    return db.query(models.Booking).filter(models.Booking.user_id == user_id)
+
+
 def book_a_book(db: Session, booking: schemas_booking.BookingCreate):
     """Забронировать книгу"""
 
@@ -59,5 +63,11 @@ def unbook_a_book(db: Session, book_item_id: int):
     booking = get_booking_by_booked_item(db=db, book_item_id=book_item_id)
     db.delete(booking)
     db.add(book_item)
+    db.commit()
+    return {"message": "unbooked successfully"}
+
+
+def unbook_a_book_by_user(db: Session, user_id: int):
+    get_all_bookings_of_user(db=db, user_id=user_id).delete()
     db.commit()
     return {"message": "unbooked successfully"}
