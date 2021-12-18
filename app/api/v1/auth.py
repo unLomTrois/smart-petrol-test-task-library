@@ -43,4 +43,5 @@ async def me(current_user: models.User = Depends(get_current_user_from_token)):
         "id": current_user.id,
         "email": current_user.email,
         "username": current_user.name,
+        "role": current_user.role
     }
