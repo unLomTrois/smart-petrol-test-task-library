@@ -44,15 +44,17 @@ def get_user_by_email(db: Session, email: str):
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+    return db.query(models.User).order_by(models.User.id) .offset(skip).limit(limit).all()
 
 
 def create_user(db: Session, user: user_schemas.UserCreate) -> models.User:
     hashed_password = get_password_hash(user.password)
-    new_user = models.User(email=user.email,
-                           hashed_password=hashed_password,
-                           name=user.name,
-                           role_id=user.role_id)
+    new_user = models.User(
+        email=user.email,
+        hashed_password=hashed_password,
+        name=user.name,
+        role_id=user.role_id,
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -61,8 +63,7 @@ def create_user(db: Session, user: user_schemas.UserCreate) -> models.User:
 
 # add password hashing
 def update_user(db: Session, user: user_schemas.UserUpdate):
-    db_user = db.query(
-        models.User).filter(models.User.id == user.id).one_or_none()
+    db_user = db.query(models.User).filter(models.User.id == user.id).one_or_none()
     if db_user is None:
         return None
 
