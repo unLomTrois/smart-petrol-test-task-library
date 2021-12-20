@@ -1,3 +1,3 @@
-[submodule "frontend"]
-	path = frontend
+[submodule "smart-petrol-test-task-frontend"]
+	path = smart-petrol-test-task-frontend
 	url = git@github.com:unLomTrois/smart-petrol-test-task-frontend.git
