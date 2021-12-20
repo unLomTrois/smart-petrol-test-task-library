@@ -20,6 +20,12 @@ $ sudo systemctl stop postgresql
 psql postgresql://testuser:testpass@localhost:5432/testdb
 ```
 
+### пакеты
+
+```bash
+pip install -r requirements.txt
+```
+
 ### сервак
 
 знаю, что принято запускать через консольный вызов сервака, но я не понял, как через него запускать целый модуль.
