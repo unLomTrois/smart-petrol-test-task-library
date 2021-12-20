@@ -27,7 +27,7 @@ async def issue_a_book(issue_form: IssueBookForm, db: Session = Depends(get_db))
     return crud.issue_a_book(db=db, form=issue_form)
 
 
-@router.delete("/")
+@router.delete("/{book_item_id}")
 async def give_a_book_back(book_item_id: int, db: Session = Depends(get_db)):
     return crud.give_book_back(db=db, book_item_id=book_item_id)
 

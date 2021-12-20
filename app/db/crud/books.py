@@ -35,6 +35,7 @@ def get_free_book_item_by_parent(db: Session, book_id: int):
             models.BookItem.is_booked == False,
             models.BookItem.is_given == False,
         )
+        .order_by(models.BookItem.id)
         .first()
     )
 

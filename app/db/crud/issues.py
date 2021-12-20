@@ -5,7 +5,11 @@ from fastapi import HTTPException, status
 from app.core.hash import get_password_hash
 
 from app.db import models
-from app.db.crud.books import get_book_item, get_book_item_by_parent, get_free_book_item_by_parent
+from app.db.crud.books import (
+    get_book_item,
+    get_book_item_by_parent,
+    get_free_book_item_by_parent,
+)
 from app.db.crud.users import get_user
 from app.db.utils import is_booked, is_booked_for_user, is_issued
 from app.schemas.issues import IssueBookForm
@@ -72,6 +76,7 @@ def give_book_back(db: Session, book_item_id: int):
     book_item.is_given = False
 
     issue = get_issue_by_book_item(db=db, book_item_id=book_item_id)
+
     db.delete(issue)
     db.add(book_item)
     db.commit()
