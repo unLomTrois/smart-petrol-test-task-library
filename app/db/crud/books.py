@@ -104,5 +104,8 @@ def add_book_items(db: Session, book_id: int, book_count: int = 1):
     ]
     db.add_all(new_book_itmes)
     db.commit()
-    db.expire_all()
-    return new_book_itmes
+    
+    new_items_count = len(new_book_itmes)
+    message = f"{new_items_count} новых экземпляров было добавлено"
+
+    return {"message": message }
