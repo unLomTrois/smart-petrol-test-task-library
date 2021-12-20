@@ -14,6 +14,12 @@ $ docker-compose up
 $ sudo systemctl stop postgresql
 ```
 
+#### подключение к бд
+
+```bash
+psql postgresql://testuser:testpass@localhost:5432/testdb
+```
+
 ### сервак
 
 знаю, что принято запускать через консольный вызов сервака, но я не понял, как через него запускать целый модуль.
@@ -22,3 +28,13 @@ $ sudo systemctl stop postgresql
 ```bash
 python main.py
 ```
+
+### роли
+
+сервер и фронт построены так, что у ролей должны быть определённые коды
+
+1 - admin
+2 - client
+3 - librarian
+
+
