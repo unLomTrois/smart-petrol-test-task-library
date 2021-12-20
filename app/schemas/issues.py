@@ -1,8 +1,9 @@
-from datetime import datetime
+from datetime import datetime, date
 from pydantic import BaseModel
+from typing import Union
 
 
 class IssueBookForm(BaseModel):
-    book_item_id: int
+    book_id: int
     user_id: int
-    end_of_issue: datetime
+    end_of_issue: Union[datetime, date]

@@ -10,7 +10,9 @@ from .booking import router as route_booking
 from .issues import router as route_issues
 
 # APIRouter creates path operations for user module
-router = APIRouter(responses={404: {"description": "Not found"}}, )
+router = APIRouter(
+    responses={404: {"description": "Not found"}},
+)
 
 router.include_router(route_book_items, prefix="/items", tags=["book_items"])
 router.include_router(route_booking, prefix="/booking", tags=["booking"])
@@ -23,21 +25,29 @@ async def get_books(db: Session = Depends(get_db)):
     books = crud.get_books(db)
 
     return [
-        book.as_dict() | {
-            "count": crud.count_book_items(db=db, book_id=book.id)
-        } for book in books
+        book.as_dict() | {"count": crud.count_free_book_items(db=db, book_id=book.id)}
+        for book in books
     ]
 
 
+@router.get("/{book_id}")
+async def get_a_book(book_id: int, db: Session = Depends(get_db)):
+
+    book = crud.get_book(db, book_id)
+
+    return book.as_dict() | {"count": crud.count_free_book_items(db=db, book_id=book.id)}
+
+
 @router.post("/add", dependencies=[Depends(check_role(["librarian"]))])
-async def add_a_book(book: book_schamas.BookCreate,
-                   db: Session = Depends(get_db)):
+async def add_a_book(book: book_schamas.BookCreate, db: Session = Depends(get_db)):
     return crud.create_book(db, book)
 
 
-@router.delete("/{book_id}/delete",
-               status_code=status.HTTP_200_OK,
-               dependencies=[Depends(check_role(["librarian"]))])
+@router.delete(
+    "/{book_id}/delete",
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(check_role(["librarian"]))],
+)
 async def delete_book(book_id: int, db: Session = Depends(get_db)):
     crud.delete_book(db, book_id)
     return {"message": "deleted successfully"}

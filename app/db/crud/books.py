@@ -20,18 +20,43 @@ def get_book_item(db: Session, book_item_id: int):
 
 
 def get_book_item_by_parent(db: Session, book_id: int):
-    return db.query(
-        models.BookItem).filter(models.BookItem.parent_book_id == book_id).first()
+    return (
+        db.query(models.BookItem)
+        .filter(models.BookItem.parent_book_id == book_id)
+        .first()
+    )
+
+
+def get_free_book_item_by_parent(db: Session, book_id: int):
+    return (
+        db.query(models.BookItem)
+        .filter(
+            models.BookItem.parent_book_id == book_id,
+            models.BookItem.is_booked == False,
+            models.BookItem.is_given == False,
+        )
+        .first()
+    )
 
 
 def count_book_items(db: Session, book_id: int):
-    return db.query(models.BookItem).filter(
-        models.BookItem.parent_book_id == book_id).count()
+    return (
+        db.query(models.BookItem)
+        .filter(models.BookItem.parent_book_id == book_id)
+        .count()
+    )
 
 
 def count_free_book_items(db: Session, book_id: int):
-    return db.query(models.BookItem).filter(
-        models.BookItem.parent_book_id == book_id).count()
+    return (
+        db.query(models.BookItem)
+        .filter(
+            models.BookItem.parent_book_id == book_id,
+            models.BookItem.is_booked == False,
+            models.BookItem.is_given == False,
+        )
+        .count()
+    )
 
 
 def get_book(db: Session, book_id: int):
@@ -43,12 +68,14 @@ def get_books(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_book(db: Session, book: schemas_book.BookCreate):
-    new_book = models.Book(title=book.title,
-                           author=book.author,
-                           description=book.description,
-                           language=book.language,
-                           pages=book.pages,
-                           publication_date=book.publication_date)
+    new_book = models.Book(
+        title=book.title,
+        author=book.author,
+        description=book.description,
+        language=book.language,
+        pages=book.pages,
+        publication_date=book.publication_date,
+    )
     db.add(new_book)
     db.commit()
     db.refresh(new_book)

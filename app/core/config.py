@@ -22,7 +22,7 @@ class Settings:
 
     SECRET_KEY: str = "6e2f0b5fbfb6af06c978e496e9c17f888690462f5062c234d60099e5fe2d1bae" # os.getenv("SECRET_KEY")
     ALGORITHM = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = 30  # in mins
+    ACCESS_TOKEN_EXPIRE_MINUTES = 60  # in mins
 
     # TEST_USER_EMAIL = "test@example.com"
 
