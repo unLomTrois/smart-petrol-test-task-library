@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Union
 from pydantic import BaseModel, validator
 from app.db.utils import get_booking_end_time
 
@@ -16,8 +16,10 @@ class Booking(BookingBase):
         orm_mode = True
 
 
-class BookingCreate(BookingBase):
-    end_of_booking: Optional[datetime]
+class BookingCreate(BaseModel):
+    user_id: int
+    book_id: int
+    end_of_booking: Union[datetime, date]
 
     @validator("end_of_booking")
     def set_end_of_booking(cls, v):

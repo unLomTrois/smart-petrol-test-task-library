@@ -34,10 +34,3 @@ class BookItem(BaseModel):
 class BookItemCreate(BaseModel):
     parent_book_id: int
     count: int
-
-
-class Booking(BaseModel):
-    id: int
-    book_item: BookItem
-    user: User
-    end_of_booking: datetime
